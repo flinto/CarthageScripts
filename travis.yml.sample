@@ -1,0 +1,20 @@
+language: objective-c
+osx_image: xcode9
+env:
+  global:
+  - FRAMEWORK_NAME=__FRAMEWORK_NAME__
+before_install:
+- brew update
+- brew outdated carthage || brew upgrade carthage
+script: xcodebuild test -scheme __SCHEMA__ -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0'
+before_deploy:
+- ./script/build.sh --no-skip-current
+- carthage archive $FRAMEWORK_NAME
+deploy:
+  provider: releases
+  file: "$FRAMEWORK_NAME.framework.zip"
+  skip_cleanup: true
+  on:
+    repo: flinto/__REPO_NAME__
+    tags: true
+
