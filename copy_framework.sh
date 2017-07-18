@@ -2,6 +2,14 @@
 
 build_dir="$SRCROOT/Carthage/Build"
 
+if [ $PLATFORM_NAME == 'macosx' ]; then
+  TARGET="Mac"
+else
+  TARGET="iOS"
+fi
+
+echo $TARGET
+
 # Only copy when the Carthage/Build directory is a symlink
 if ! [ -L "$build_dir" ]; then exit 0; fi
 
