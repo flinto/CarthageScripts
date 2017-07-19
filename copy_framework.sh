@@ -8,11 +8,9 @@ else
   TARGET="iOS"
 fi
 
-echo $TARGET
-
 # Only copy when the Carthage/Build directory is a symlink
 if ! [ -L "$build_dir" ]; then exit 0; fi
 
-echo "Copying framework into main repos"
+echo "Copying $TARGET framework into main repos"
 
-rsync --delete -av "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME"* "$build_dir/Mac"
+rsync --delete -av "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME".framework "$build_dir/$TARGET"
