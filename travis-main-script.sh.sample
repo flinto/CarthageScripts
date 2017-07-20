@@ -1,0 +1,2 @@
+#!/bin/sh
+xcodebuild test -scheme "Extensions_macOS"

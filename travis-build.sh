@@ -1,6 +1,8 @@
+#!/bin/sh
 if [ -n "$TRAVIS_TAG" ]
 then
-  #tag is set
+  #tag is set. skip test
+  echo "Skip test"
 else
-  #tag is not set
+  sh travis-main-script.sh
 fi
