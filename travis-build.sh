@@ -1,8 +1,11 @@
 #!/bin/sh
 if [ -n "$TRAVIS_TAG" ]
 then
-  #tag is set. skip test
-  echo "Skip test"
+  echo "skip testing"
 else
-  sh travis-main-script.sh
+  if [ -f "travis-main-script.sh" ]; then
+    sh travis-main-script.sh
+  else
+    xcodebuild test -scheme "$BUILD_SCHEME"
+  fi
 fi
