@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# This script removes symlinks from Carthage checkouts.
+
+ls Carthage/Checkouts | while read line
+do
+    read -a array <<< "$line"
+
+    dependency=${array[0]}
+    if ! [[ -L $dependency && "$1" = $dependency ]]
+    then
+        echo "Remove checkout links of $dependency"
+        rm Carthage/Checkouts/$dependency
+    fi
+done
+
