@@ -6,7 +6,7 @@ env:
 before_install:
 - brew update
 - brew outdated carthage || brew upgrade carthage
-script: "/CarthageScripts/travis-build.sh"
+script: "./CarthageScripts/travis-build.sh"
 before_deploy:
 - "./CarthageScripts/bump-version.sh"
 - ./CarthageScripts/build-static-framework.sh
