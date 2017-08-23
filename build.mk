@@ -22,7 +22,7 @@ localize:
 		find "$$base" -name "*.swift" ! -name "Localize.swift" | xargs genstrings -q -u -s $(ROUTINE); \
 		iconv -f UTF-16LE -t utf8 Localizable.strings > Localizable-utf8.strings; \
 		for lang in $(LANG); do \
-			./CarthageScripts/genstringmerge.rb "$$base"/"$$lang"/Localizable.strings Localizable-utf8.strings; \
+			./CarthageScripts/genstringmerge.rb "$$base"/"Resources/$$lang"/Localizable.strings Localizable-utf8.strings; \
 		done ; \
   done
 
