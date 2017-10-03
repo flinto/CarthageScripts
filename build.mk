@@ -24,6 +24,7 @@ localize:
 		for lang in $(LANG); do \
 			./CarthageScripts/genstringmerge.rb "$$base"/"Resources/$$lang"/Localizable.strings Localizable-utf8.strings; \
 		done ; \
+		rm Localizable.strings Localizable-utf8.strings; \
   done
 
 localize_xib:
