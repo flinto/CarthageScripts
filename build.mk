@@ -8,7 +8,7 @@ build-static-framework:
 #
 # Localize
 #
-LANG=en.lproj ja.lproj zh-Hans.lproj zh-Hant.lproj de.lproj es.lproj ko.lproj ru.lproj fr.lproj
+LANG=en ja zh-Hans zh-Hant de es ko ru fr
 
 remove_placeholder:
 	for xliff in xliff/*; do \
@@ -17,11 +17,12 @@ remove_placeholder:
 		mv processed.xliff $$xliff; \
 	done
 
-xliff: genstring update_xib generate_xliff update_xliff
+xliff: generate_xliff update_xliff
 
 generate_xliff:
-	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj
-	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj -exportLanguage en
+	for lang in $(LANG); do \
+		xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj -exportLanguage $$lang; \
+	done
 
 update_xliff:
 	for xliff in xliff/*; do \
@@ -32,7 +33,7 @@ update_xliff:
 
 genstring:
 	for base in $(BASE_DIR); do \
-		find "$$base" -name "*.swift" ! -name "Localize.swift" | xargs genstrings -q -u -s $(ROUTINE); \
+		find "$$base" -name "*.swift" ! -name "Localize.swift" | xargs genstrings -q -u; \
 		iconv -f UTF-16LE -t utf8 Localizable.strings > Localizable-utf8.strings; \
 		for lang in Base.lproj $(LANG); do \
 			./CarthageScripts/genstringmerge.rb "$$base"/"$(RESOURCE_DIR)""$$lang"/Localizable.strings Localizable-utf8.strings; \
