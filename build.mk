@@ -17,18 +17,20 @@ remove_placeholder:
 		mv processed.xliff $$xliff; \
 	done
 
+xliff: genstring generate_xliff update_xliff
 
-update_xliff: localize
-
+generate_xliff:
 	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj
 	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj -exportLanguage en
+
+update_xliff:
 	for xliff in xliff/*; do \
 		echo "Processing $$xliff..."; \
 		ruby ./CarthageScripts/update_xliff.rb $$xliff > processed.xliff; \
 		mv processed.xliff $$xliff; \
 	done
 
-localize:
+genstring:
 	for base in $(BASE_DIR); do \
 		find "$$base" -name "*.swift" ! -name "Localize.swift" | xargs genstrings -q -u -s $(ROUTINE); \
 		iconv -f UTF-16LE -t utf8 Localizable.strings > Localizable-utf8.strings; \
