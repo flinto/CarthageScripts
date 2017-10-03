@@ -17,7 +17,7 @@ remove_placeholder:
 		mv processed.xliff $$xliff; \
 	done
 
-xliff: genstring generate_xliff update_xliff
+xliff: genstring updte_xib generate_xliff update_xliff
 
 generate_xliff:
 	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj
@@ -34,11 +34,26 @@ genstring:
 	for base in $(BASE_DIR); do \
 		find "$$base" -name "*.swift" ! -name "Localize.swift" | xargs genstrings -q -u -s $(ROUTINE); \
 		iconv -f UTF-16LE -t utf8 Localizable.strings > Localizable-utf8.strings; \
-		for lang in $(LANG); do \
+		for lang in Base.lproj $(LANG); do \
 			./CarthageScripts/genstringmerge.rb "$$base"/"$(RESOURCE_DIR)""$$lang"/Localizable.strings Localizable-utf8.strings; \
 		done ; \
 		rm Localizable.strings Localizable-utf8.strings; \
-  done
+	done
+
+update_xib:
+	for file in "$(BASE_DIR)"/Base.lproj/*.xib "$(BASE_DIR)"/Base.lproj/*.storyboard; do \
+		echo "file $$file"; \
+		STRINGFILE=`basename "$$file" | sed  -E 's/\.(xib|storyboard)/.strings/'`; \
+		echo "string file $$STRINGFILE"; \
+		if [ -f "$(BASE_DIR)/ja.lproj/$$STRINGFILE" ]; then \
+			echo "Processing $$file"; \
+			ibtool --export-strings-file "$$file.strings" "$$file"; \
+			for lang in $(LANG); do \
+				./CarthageScripts/stringmerge.rb $$lang "$(BASE_DIR)/$$lang/$$STRINGFILE" "$$file.strings"; \
+			done ; \
+			rm "$$file.strings"; \
+		fi \
+	done
 
 localize_xib:
 	for base in $(BASE_DIR); do \
