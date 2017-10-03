@@ -18,7 +18,10 @@ remove_placeholder:
 	done
 
 
-update_xliff:
+update_xliff: localize
+
+	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj
+	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj -exportLanguage en
 	for xliff in xliff/*; do \
 		echo "Processing $$xliff..."; \
 		ruby ./CarthageScripts/update_xliff.rb $$xliff > processed.xliff; \

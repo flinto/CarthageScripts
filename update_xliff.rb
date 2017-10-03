@@ -5,6 +5,13 @@ require 'nokogiri'
 doc = Nokogiri::XML(File.open(ARGV[0]))
 doc.encoding = 'UTF-8'
 
+doc.xpath("//xliff:file", "xliff" => "urn:oasis:names:tc:xliff:document:1.2").each do |file|
+  if file.attr("original") =~ /Info.plist/
+    file.remove
+  end
+end
+
+
 doc.xpath("//xliff:trans-unit", "xliff" => "urn:oasis:names:tc:xliff:document:1.2").each do |trans|
   next unless trans.at("note")
   source = trans.at("source").content
