@@ -17,7 +17,7 @@ remove_placeholder:
 		mv processed.xliff $$xliff; \
 	done
 
-xliff: genstring updte_xib generate_xliff update_xliff
+xliff: genstring update_xib generate_xliff update_xliff
 
 generate_xliff:
 	xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj
