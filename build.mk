@@ -19,6 +19,13 @@ remove_placeholder:
 
 xliff: generate_xliff update_xliff
 
+import_xliff:
+	for xliff in xliff/*; do \
+		if [ $$xliff != 'xliff/en.xliff' ]; then \
+			xcodebuild -importLocalizations -localizationPath $$xliff -project $(BASE_DIR).xcodeproj ;\
+		fi; \
+	done
+
 generate_xliff:
 	for lang in $(LANG); do \
 		xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj -exportLanguage $$lang; \
