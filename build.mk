@@ -5,6 +5,16 @@ build-static-framework:
 	mkdir -p ../Nucleator/Carthage/Build/iOS
 	rsync --delete -av Carthage/Build/iOS/* ../Nucleator/Carthage/Build/iOS
 
+
+build-framework:
+	# bump up version number
+	agvtool new-marketing-version `git describe --tags`
+	agvtool new-version `date "+%H%M%S"`
+	# build
+	carthage build --no-skip-current
+	carthage archive $(FRAMEWORK)
+
+
 #
 # Localize
 #
