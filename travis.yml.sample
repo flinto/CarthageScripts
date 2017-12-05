@@ -8,9 +8,7 @@ before_install:
 - brew outdated carthage || brew upgrade carthage
 script: "./CarthageScripts/travis-build.sh"
 before_deploy:
-- "./CarthageScripts/bump-version.sh"
-- ./CarthageScripts/build-static-framework.sh
-- carthage archive $FRAMEWORK_NAME
+- "./CarthageScripts/archive-framework.sh"
 deploy:
   provider: releases
   file: "$FRAMEWORK_NAME.framework.zip"
