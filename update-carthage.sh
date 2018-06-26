@@ -26,7 +26,7 @@ if [ ! -z "$checkouts" -a "$checkouts" != " " ]; then
   echo "Development sym link \"$checkouts\" found"
 fi
 
-frameworks=`ruby ./scripts/get_frameworks.rb $checkouts`
+frameworks=`ruby ./CarthageScripts/get_frameworks.rb $checkouts`
 
 if [ "$?" == "1" ]; then
   exit
