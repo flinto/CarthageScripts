@@ -44,15 +44,20 @@ import_xliff:
 	done
 
 generate_xliff:
+	mkdir -p xliff_new
 	for lang in $(LANG); do \
-		xcodebuild -exportLocalizations -localizationPath xliff -project $(BASE_DIR).xcodeproj -exportLanguage $$lang; \
+		xcodebuild -exportLocalizations -localizationPath xliff_new -project $(BASE_DIR).xcodeproj -exportLanguage $$lang; \
 	done
 
 update_xliff:
-	for xliff in xliff/*; do \
+	for xliff in xliff_new/*; do \
 		echo "Processing $$xliff..."; \
 		ruby ./CarthageScripts/update_xliff.rb $$xliff > processed.xliff; \
 		mv processed.xliff $$xliff; \
+	done
+
+	for xliff in xliff/*; do \
+		ruby ./CarthageScripts/xliff_diff.rb $$xliff ./xliff_new/`basename $$xliff`; \
 	done
 
 genstring:

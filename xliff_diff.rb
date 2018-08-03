@@ -17,11 +17,11 @@ dst.xpath("//xliff:trans-unit", "xliff" => "urn:oasis:names:tc:xliff:document:1.
   if dict.has_key?(trans.attr("id"))
     dict.delete(trans.attr("id"))
   else
-    p "New: #{trans.attr("id")}"
+    p "New: #{trans.attr("id")} #{trans.at("note")}"
   end
 end
 
-dict.each_key do |key|
-  p "Removed: #{key}"
+dict.each do |key, trans|
+  p "Removed: #{key} #{trans.at("note")}"
 end
 
