@@ -56,9 +56,7 @@ update_xliff:
 		mv processed.xliff $$xliff; \
 	done
 
-	for xliff in xliff/*; do \
-		ruby ./CarthageScripts/xliff_diff.rb $$xliff ./xliff_new/`basename $$xliff`; \
-	done
+	ruby ./CarthageScripts/xliff_diff.rb xliff/en.xliff xliff_new/en.xliff; \
 
 genstring:
 	for base in $(BASE_DIR); do \
