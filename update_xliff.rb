@@ -6,28 +6,49 @@ doc = Nokogiri::XML(File.open(ARGV[0]))
 doc.encoding = 'UTF-8'
 
 doc.xpath("//xliff:file", "xliff" => "urn:oasis:names:tc:xliff:document:1.2").each do |file|
-  if file.attr("original") =~ /Info.plist/
+  original = file.attr("original")
+  if original =~ /Info.plist/ || original =~ /InfoPlist.strings/
     file.remove
   end
 end
 
 doc.xpath("//xliff:trans-unit", "xliff" => "urn:oasis:names:tc:xliff:document:1.2").each do |trans|
-  next unless trans.at("note")
   source = trans.at("source").content
-  if source =~ /(__[A-Za-z_]+__)/
-    trans.remove
+
+  if trans.attr("id") =~ /ibShadowedMultipleValuesPlaceholder|ibShadowedIsNilPlaceholder|ibShadowedNoSelectionPlaceholder|ibShadowedNotApplicablePlaceholder/
+    if trans.at("source").content =~ /^(\s|0)*$/
+      trans.remove
+    end
   end
+
+  trans.at("source").content = source.gsub(/\\\"/, '"')
+
   if source =~ /(__DEBUG)/
     trans.remove
   end
-  if trans.at("note").content =~ /Note\s*=\s*\"Do not translate\";/
+  if source =~ /(__PLACEHOLDER)/
     trans.remove
   end
-  if trans.attr("id") =~ /ibShadowedMultipleValuesPlaceholder|ibShadowedIsNilPlaceholder|ibShadowedNoSelectionPlaceholder|ibShadowedNotApplicablePlaceholder/
-    if trans.at("source").content =~ /^(\s+|0)$/
+
+  if source =~ /(__[A-Za-z_]+__)/
     trans.remove
-    end
   end
+
+
+  next unless trans.at("note")
+  note = trans.at("note").content
+
+
+  if note =~ /(__DEBUG)/
+    trans.remove
+  end
+  if note =~ /(__PLACEHOLDER)/
+    trans.remove
+  end
+  if note =~ /Note\s*=\s*\"Do not translate\";/im
+    trans.remove
+  end
+
 end
 
 puts doc
