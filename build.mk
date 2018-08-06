@@ -25,15 +25,6 @@ build-static-framework-locally:
 #
 # Localize
 #
-LANG=en ja zh-Hans zh-Hant de es ko ru fr
-
-remove_placeholder:
-	for xliff in xliff/*; do \
-		echo "Processing $$xliff..."; \
-		ruby etc/remove_placeholder.rb $$xliff > processed.xliff; \
-		mv processed.xliff $$xliff; \
-	done
-
 xliff: generate_xliff update_xliff
 
 import_xliff:
@@ -45,60 +36,11 @@ import_xliff:
 
 generate_xliff:
 	mkdir -p xliff_new
-	for lang in $(LANG); do \
-		xcodebuild -exportLocalizations -localizationPath xliff_new -project $(BASE_DIR).xcodeproj -exportLanguage $$lang; \
-	done
+	xcodebuild -exportLocalizations -localizationPath xliff_new -project $(BASE_DIR).xcodeproj -exportLanguage en
+	ruby ./CarthageScripts/update_xliff.rb xliff_new/en.xliff > processed.xliff
+	mv processed.xliff xliff_new/en.xliff
+	ruby ./CarthageScripts/xliff_diff.rb xliff/en.xliff xliff_new/en.xliff
+	mv xliff_new/en.xliff xliff/en.xliff
+	rmdir xliff_new
 
-update_xliff:
-	for xliff in xliff_new/*; do \
-		echo "Processing $$xliff..."; \
-		ruby ./CarthageScripts/update_xliff.rb $$xliff > processed.xliff; \
-		mv processed.xliff $$xliff; \
-	done
-	ruby ./CarthageScripts/xliff_diff.rb xliff/en.xliff xliff_new/en.xliff; \
-
-move_xliff:
-	for xliff in xliff_new/*; do \
-		mv $$xliff xliff/`(basename $$xliff)`; \
-	done
-
-genstring:
-	for base in $(BASE_DIR); do \
-		find "$$base" -name "*.swift" ! -name "Localize.swift" | xargs genstrings -q -u; \
-		iconv -f UTF-16LE -t utf8 Localizable.strings > Localizable-utf8.strings; \
-		for lang in Base.lproj $(LANG); do \
-			./CarthageScripts/genstringmerge.rb "$$base"/"$(RESOURCE_DIR)""$$lang"/Localizable.strings Localizable-utf8.strings; \
-		done ; \
-		rm Localizable.strings Localizable-utf8.strings; \
-	done
-
-update_xib:
-	for file in "$(BASE_DIR)"/Base.lproj/*.xib "$(BASE_DIR)"/Base.lproj/*.storyboard; do \
-		echo "file $$file"; \
-		STRINGFILE=`basename "$$file" | sed  -E 's/\.(xib|storyboard)/.strings/'`; \
-		echo "string file $$STRINGFILE"; \
-		if [ -f "$(BASE_DIR)/ja.lproj/$$STRINGFILE" ]; then \
-			echo "Processing $$file"; \
-			ibtool --export-strings-file "$$file.strings" "$$file"; \
-			for lang in $(LANG); do \
-				./CarthageScripts/stringmerge.rb $$lang "$(BASE_DIR)/$$lang/$$STRINGFILE" "$$file.strings"; \
-			done ; \
-			rm "$$file.strings"; \
-		fi \
-	done
-
-localize_xib:
-	for base in $(BASE_DIR); do \
-		for file in "$$base"/Base.lproj/*.xib "$$base"/Base.lproj/*.storyboard; do \
-			STRINGFILE=`basename "$$file" | sed  -E 's/\.(xib|storyboard)/.strings/'`; \
-			if [ -f "$$base/ja.lproj/$$STRINGFILE" ]; then \
-				echo "Processing $$file"; \
-				ibtool --export-strings-file "$$file.strings" "$$file"; \
-				for lang in $(LANG); do \
-					./CarthageScripts/stringmerge.rb $$lang "$$base/$$lang/$$STRINGFILE" "$$file.strings"; \
-				done ; \
-				rm "$$file.strings"; \
-			fi \
-		done; \
-  done
 
