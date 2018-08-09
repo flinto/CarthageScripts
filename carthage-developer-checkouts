@@ -18,6 +18,14 @@ do
     dependency=${array[0]}
     version=${array[1]}
 
+    if [[ "$1" != "" && "$1" != "$dependency" ]]; then
+        continue
+    fi
+
+    if [ "$dependency" == "CommonCrypto" ]; then
+        continue
+    fi
+
     dependency_dir="$parent_dir/$dependency"
     checkout_dir="Carthage/Checkouts/$dependency"
 
