@@ -37,8 +37,4 @@ fi
 echo "download dependencies... $frameworks"
 
 VERSION=`carthage version`
-if [ "$VERSION" == "0.29.0" ]; then
-  carthage build --use-binaries $frameworks
-else
-  carthage checkout --use-binaries $frameworks
-fi
+carthage build --use-binaries $frameworks
