@@ -37,4 +37,4 @@ fi
 echo "download dependencies... $frameworks"
 
 VERSION=`carthage version`
-carthage build --use-binaries --cache-builds $frameworks
+carthage build --use-binaries --cache-builds --platform macOS,iOS $frameworks
